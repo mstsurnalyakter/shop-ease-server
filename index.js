@@ -37,24 +37,6 @@ async function run() {
     const productsCollection = db.collection("products");
 
 
-    //get all session
-      //  app.get("/products", async (req, res) => {
-      //    const page = parseInt(req.query.page) - 1;
-      //    const size = parseInt(req.query.size);
-      //    const search = req.query.search || "";
-      //    const searchString =String(search);
-
-      //    const query = {
-      //      productName: { $regex: searchString, $options: "i" },
-      //    };
-      //    const result = await productsCollection
-      //      .find(query)
-      //      .skip(page * size)
-      //      .limit(size)
-      //      .toArray();
-      //    res.send(result);
-      //  });
-
 app.get("/products", async (req, res) => {
   console.log(req.query);
   const page = parseInt(req.query.page) - 1;
@@ -64,26 +46,24 @@ app.get("/products", async (req, res) => {
   const category = req.query.category || "";
   const priceMin = parseInt(req.query.priceMin) || 0;
   const priceMax = parseInt(req.query.priceMax) || 1000;
-  const sortBy = req.query.sortBy || "price-asc"; // Added sortBy
-
+  const sortBy = req.query.sortBy || "price-asc";
   const query = {
     productName: { $regex: search, $options: "i" },
     ...(brand && { brandName: brand }),
     ...(category && { category: category }),
     price: { $gte: priceMin, $lte: priceMax },
   };
-  //lllllllllllllllllllllll
+
   // Added sort options based on sortBy parameter
   const sortOptions = {
     "price-asc": { price: 1 },
     "price-desc": { price: -1 },
     "date-desc": { dateAdded: -1 },
   };
-  //lllllllllllllllllllllll
 
   const result = await productsCollection
     .find(query)
-    .sort(sortOptions[sortBy] || { price: 1 }) // Default to price ascending if sortBy is invalid
+    .sort(sortOptions[sortBy] || { price: 1 })
     .skip(page * size)
     .limit(size)
     .toArray();
@@ -106,18 +86,11 @@ app.get("/products", async (req, res) => {
              ...(category && { category: category }),
              price: { $gte: priceMin, $lte: priceMax },
            };
-           //  const search = req.query.search || "";
-           //  const searchString = String(search);
-           //  let query = {
-           //    productName: { $regex: searchString, $options: "i" },
-           //  };
+
            const count = await productsCollection.countDocuments(query);
            res.send({ count });
          });
-    // app.get("/products", async (req, res) => {
-    //   const result = await productsCollection.find().toArray();
-    //   res.send(result);
-    // });
+
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
