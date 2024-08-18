@@ -33,8 +33,81 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const db = client.db("shop-ease");
+    const db = client.db("shopEaseDB");
+    const productsCollection = db.collection("products");
 
+
+    //get all session
+      //  app.get("/products", async (req, res) => {
+      //    const page = parseInt(req.query.page) - 1;
+      //    const size = parseInt(req.query.size);
+      //    const search = req.query.search || "";
+      //    const searchString =String(search);
+
+      //    const query = {
+      //      productName: { $regex: searchString, $options: "i" },
+      //    };
+      //    const result = await productsCollection
+      //      .find(query)
+      //      .skip(page * size)
+      //      .limit(size)
+      //      .toArray();
+      //    res.send(result);
+      //  });
+
+app.get("/products", async (req, res) => {
+    console.log(req.query);
+  const page = parseInt(req.query.page) - 1;
+  const size = parseInt(req.query.size);
+  const search = req.query.search || "";
+  const brand = req.query.brand || "";
+  const category = req.query.category || "";
+  const priceMin = parseInt(req.query.priceMin) || 0;
+  const priceMax = parseInt(req.query.priceMax) || 1000;
+
+  const query = {
+    productName: { $regex: search, $options: "i" },
+    ...(brand && { brandName: brand }),
+    ...(category && { category: category }),
+    price: { $gte: priceMin, $lte: priceMax },
+  };
+
+  const result = await productsCollection
+    .find(query)
+    .skip(page * size)
+    .limit(size)
+    .toArray();
+
+  res.send(result);
+});
+
+
+         app.get("/products-count", async (req, res) => {
+           const search = req.query.search || "";
+           const brand = req.query.brand || "";
+           const category = req.query.category || "";
+           const priceMin = parseInt(req.query.priceMin) || 0;
+           const priceMax = parseInt(req.query.priceMax) || 1000;
+
+
+           const query = {
+             productName: { $regex: search, $options: "i" },
+             ...(brand && { brandName: brand }),
+             ...(category && { category: category }),
+             price: { $gte: priceMin, $lte: priceMax },
+           };
+          //  const search = req.query.search || "";
+          //  const searchString = String(search);
+          //  let query = {
+          //    productName: { $regex: searchString, $options: "i" },
+          //  };
+           const count = await productsCollection.countDocuments(query);
+           res.send({ count });
+         });
+    // app.get("/products", async (req, res) => {
+    //   const result = await productsCollection.find().toArray();
+    //   res.send(result);
+    // });
 
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
@@ -47,7 +120,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello from LearnEnglish Server..");
+  res.send("Welcome to ShopEase Server..");
 });
 
 app.listen(port, () => {
