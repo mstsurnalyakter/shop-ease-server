@@ -71,26 +71,36 @@ app.get("/products", async (req, res) => {
 
   res.send(result);
 });
+app.get("/just-for-you", async (req, res) => {
+
+  const result = await productsCollection
+    .find()
+    .limit(12)
+    .toArray();
+
+  res.send(result);
+});
 
 
-         app.get("/products-count", async (req, res) => {
-           const search = req.query.search || "";
-           const brand = req.query.brand || "";
-           const category = req.query.category || "";
-           const priceMin = parseInt(req.query.priceMin) || 0;
-           const priceMax = parseInt(req.query.priceMax) || 1000;
+app.get("/products-count", async (req, res) => {
+    const search = req.query.search || "";
+    const brand = req.query.brand || "";
+    const category = req.query.category || "";
+    const priceMin = parseInt(req.query.priceMin) || 0;
+    const priceMax = parseInt(req.query.priceMax) || 1000;
 
 
-           const query = {
-             productName: { $regex: search, $options: "i" },
-             ...(brand && { brandName: brand }),
-             ...(category && { category: category }),
-             price: { $gte: priceMin, $lte: priceMax },
-           };
+    const query = {
+      productName: { $regex: search, $options: "i" },
+      ...(brand && { brandName: brand }),
+      ...(category && { category: category }),
+      price: { $gte: priceMin, $lte: priceMax },
+    };
 
-           const count = await productsCollection.countDocuments(query);
-           res.send({ count });
-         });
+    const count = await productsCollection.countDocuments(query);
+    res.send({ count });
+  });
+
 
 
     console.log(
