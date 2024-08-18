@@ -2,7 +2,7 @@
 
 - **Live Site URL:** [ShopeEase]()
 
-- **Server Site Repository:** [Client]()
+- **Server Site Repository:** [Client](https://github.com/mstsurnalyakter/shop-ease-client)
 
 ## Description
 ShopEase Backend is a Node.js application that provides API endpoints for a shopping platform. It connects to a MongoDB database and supports functionalities such as fetching products, filtering by brand and category, sorting by price or date, and pagination.
