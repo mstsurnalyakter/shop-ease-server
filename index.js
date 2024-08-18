@@ -81,6 +81,16 @@ app.get("/just-for-you", async (req, res) => {
   res.send(result);
 });
 
+app.get("/categoryProducts/:categoryName", async (req, res) => {
+
+    const categoryName = req.params.categoryName;
+    const result = await productsCollection
+      .find({ category: { $regex: new RegExp(`^${categoryName}$`, "i") } })
+      .toArray();
+    res.send(result);
+
+});
+
 
 app.get("/products-count", async (req, res) => {
     const search = req.query.search || "";
